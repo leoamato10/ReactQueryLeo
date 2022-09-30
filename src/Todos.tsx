@@ -20,11 +20,36 @@ const Todos = () => {
             }
         })
         return res.data
-    })
+    },)
+
+    const apellido = data?.data.currentUser.user.ape
+    const nombre = data?.data.currentUser.user.nom
+    const token = data?.data.currentUser.token
+
+    const { fetchStatus, data: profile } = useQuery(['profileData'], async () => {
+
+        const res = await axios.get("https://sersaludonline.com/api/dashboard/profile",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+        return res.data
+    },
+        {
+            // The query will not execute until the userId exists
+            enabled: !!token,
+        }
+    )
+
+
+    const edad = profile?.data.fec_nac
 
 
 
     if (isLoading) return <Text>'Loading...'</Text>
+
+
 
     if (error) return <Text>'An error has occurred: ' + {"error.message"}</Text>
 
@@ -39,8 +64,10 @@ const Todos = () => {
 
     return (
         <View>
-            <Text>{data?.data.currentUser.user.nom}</Text>
-            <Text>{data?.data.currentUser.user.ape}</Text>
+            <Text>Fetch Status: {fetchStatus}</Text>
+            <Text>{nombre}</Text>
+            <Text>{apellido}</Text>
+            <Text>Fecha de nacimiento: {edad}</Text>
         </View>
     )
 }
